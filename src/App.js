@@ -17,12 +17,14 @@ function App() {
   const [turns, setTurns] = useState(0);
   const [choiceOne, setChoiceOne] = useState(null);
   const [choiceTwo, setChoiceTwo] = useState(null);
+  const [disabled, setDisabled] = useState(false);
 
   const shuffleCards = () => {
     const shuffleCards = [...cardImages, ...cardImages]
       .sort(() => Math.random() - 0.5)
       .map((card) => ({ ...card, id: Math.random() }));
-
+    setChoiceOne(null);
+    setChoiceTwo(null);
     setCards(shuffleCards);
     setTurns(0);
   };
@@ -37,11 +39,13 @@ function App() {
     setChoiceOne(null);
     setChoiceTwo(null);
     setTurns((prevTurns) => prevTurns + 1);
+    setDisabled(false);
   };
 
   //compare choices
   useEffect(() => {
     if (choiceOne && choiceTwo) {
+      setDisabled(true);
       if (choiceOne.src === choiceTwo.src) {
         setCards((prevCards) => {
           return prevCards.map((card) => {
@@ -59,6 +63,11 @@ function App() {
     }
   }, [choiceOne, choiceTwo]);
 
+  //start a new game automatically
+  useEffect(() => {
+    shuffleCards();
+  }, []);
+
   console.log(cards);
   return (
     <div className="App">
@@ -75,6 +84,7 @@ function App() {
           />
         ))}
       </div>
+      <p>Number of Turns: {turns}</p>
     </div>
   );
 }
